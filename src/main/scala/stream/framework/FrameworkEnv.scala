@@ -53,7 +53,7 @@ object FrameworkEnv {
   
   def main(args: Array[String]) {
     if (args.length < 4) {
-      println("FrameworkEnv master zkQuorum group config/properties.xml")
+      println("FrameworkEnv master zkQuorum group conf/properties.xml")
       exit(1)
     }
     
