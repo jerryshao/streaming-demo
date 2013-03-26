@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<applications>
+    <application>
+        <category>clickstream</category>
+        <parser>example.clickstream.ClickEventParser</parser>
+        <output>example.clickstream.ClickEventOutput</output>
+        <items>
+            <item>source_ip</item>
+            <item>dest_url</item>
+            <item>visit_date</item>
+            <item>ad_revenue</item>
+            <item>user_agent</item>
+            <item>c_code</item>
+            <item>l_code</item>
+            <item>s_keyword</item>
+            <item>avg_time_onsite</item>
+        </items>
+        <properties>
+            <property window="30" slide="10" hierarchy="/" type="count">
+                <key>dest_url</key>
+            </property>
+            <property window="30" slide="10" hierarchy="/" type="aggregate">
+                <key>dest_url</key>
+                <value>source_ip</value>
+            </property>
+        </properties>
+    </application>
+</applications>
