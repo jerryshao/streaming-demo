@@ -24,6 +24,10 @@
                 <key>dest_url</key>
                 <value>source_ip</value>
             </property>
+            <property window="30" slide="10" hierarchy="/" type="distinct_aggregate_count">
+                <key>dest_url</key>
+                <value>source_ip</value>
+            </property>
         </properties>
     </application>
 </applications>

@@ -25,6 +25,15 @@ case class CountProperty(
 	"window(" + window._1 + ":" + window._2 + ") hierarchy(" + hierarchy + ")"
 }
 
+case class DistinctAggregateCountProperty(
+    val window: (Option[Long], Option[Long]),
+    val hierarchy: Option[String],
+    val key: String,
+    val value: String) extends Property {
+  override def toString =  "keyValue(" + key + ":" + value + ") " + 
+	"window(" + window._1 + ":" + window._2 + ") hierarchy(" + hierarchy + ")"
+}
+
 
 class AppConfig (
     val category: String,
@@ -100,6 +109,22 @@ object Configuration {
           val value = (p \ "value").text
           
           new AggregateProperty((window, slide), hierarchy, key, value)
+        }
+        
+        case "distinct_aggregate_count" => {
+          val window = if ((p \ "@window").length == 0) None 
+        		  		else Some((p \ "@window").text.toLong)
+        		  		
+          val slide = if ((p \ "@slide").length == 0) None 
+        		  		else Some((p \ "@slide").text.toLong)
+          
+          val hierarchy = if ((p \ "@hierarchy").length == 0) None 
+        		  		else Some((p \ "@hierarchy").text)
+        		  		
+          val key = (p \ "key").text
+          val value = (p \ "value").text
+          
+          new DistinctAggregateCountProperty((window, slide), hierarchy, key, value)
         }
       }
     })

@@ -9,9 +9,7 @@ import stream.framework.parser.AbstractEventParser
 import stream.framework.output.AbstractEventOutput
 import stream.framework.output.StdEventOutput
 import stream.framework.operator._
-import stream.framework.util.CountProperty
-import stream.framework.util.AggregateProperty
-import stream.framework.util.Configuration
+import stream.framework.util._
 
 object FrameworkEnv {
 
@@ -38,6 +36,8 @@ object FrameworkEnv {
           new CountOperator(s.key, s.hierarchy, s.window)
         case s: AggregateProperty => 
           new AggregateOperator(s.key, s.value, s.hierarchy, s.window)
+        case s: DistinctAggregateCountProperty =>
+          new DistinctAggregateCountOperator(s.key, s.value, s.hierarchy, s.window)
         case _ => new NoneOperator
       }
     })
