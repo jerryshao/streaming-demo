@@ -57,7 +57,7 @@ Here several `application` can exists in one `applications`, user can configure 
 3. `items` is the schema of input message, in case input message has several items, this is the name of each item.
 4. `properties` is the one you want to operate, you could specify several kinds of operators with some properties
 
-Currenty framework supprts 3 operators for user:
+Currently framework supports 3 operators for user:
 
 * `CountOperator`: `CountOperator` will count the occurrence of specific `key`, like PV (page views), here are several parameters related to `CountOperator`,
     * `window`: specify the timing window for Spark Streaming to collect data and calculate
@@ -65,7 +65,7 @@ Currenty framework supprts 3 operators for user:
     * `hierarchy`: `hierarchy` means if you want to delimit data using specified delimiter, like `/`. As for page view analysis, each url should split like this:
 
             http://xyz.com/aaa/bbb/ccc => xyz.com/aaa/bbb/ccc xyz.com/aaa/bbb xyz.com/aaa xyz.com
-    * `type`: spcify the operator you choose.
+    * `type`: specify the operator you choose.
 * `AggregateOperator`: `AggregateOperator` will aggregate the `value` by `key` which you specified, and the parameters of this operator is the same as `CountOperator`.
 * `DistinctAggregateOperator`: `DistinctAggregateOperator` will count the distinct `value` with specified `key`, also parameters is the same as above.
 * besides, user can create their own `Operator` by extends `AbstractOperator`, which is easy and obvious.

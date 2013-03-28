@@ -3,6 +3,7 @@ package stream.framework
 import spark.streaming.DStream
 import spark.streaming.StreamingContext
 import spark.streaming.Seconds
+import spark.SparkContext
 
 import stream.framework.util.AppConfig
 import stream.framework.parser.AbstractEventParser
@@ -52,20 +53,21 @@ object FrameworkEnv {
   }
   
   def main(args: Array[String]) {
-    if (args.length < 4) {
-      println("FrameworkEnv master zkQuorum group conf/properties.xml")
+    if (args.length < 6) {
+      println("FrameworkEnv master SPARK_HOME jar zkQuorum group conf/properties.xml")
       exit(1)
     }
     
     //parse the conf file
-    Configuration.parseConfig(args(3))
+    Configuration.parseConfig(args(5))
 
     //for each app, create its app env
     val appEnvs = Configuration.appConfMap.map(e => (e._1, new AppEnv(e._2)))
     
     //create kafka input stream
-    val Array(master, zkQuorum, group, _) = args
-    val ssc =  new StreamingContext(master, "kafkaStream", Seconds(5))
+    val Array(master, sparkHome, jar, zkQuorum, group, _) = args
+    val sc = new SparkContext(master, "kafkaStream", sparkHome, Seq(jar))
+    val ssc =  new StreamingContext(sc, Seconds(5))
     ssc.checkpoint("checkpoint")
     
     /****************TODO. this should be modified later*******************/
