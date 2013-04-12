@@ -14,6 +14,10 @@ libraryDependencies += "org.spark-project" %% "spark-core" % "0.7.0"
 
 libraryDependencies += "org.spark-project" %% "spark-streaming" % "0.7.0"
 
+libraryDependencies += "it.unimi.dsi" % "fastutil" % "6.4.2"
+
+libraryDependencies += "com.googlecode.javaewah" % "JavaEWAH" % "0.4.2"
+
 resolvers ++= Seq(
    "Maven Repository" at "http://repo1.maven.org/maven2",
    "Akka Repository" at "http://repo.akka.io/releases/",

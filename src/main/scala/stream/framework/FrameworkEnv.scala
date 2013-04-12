@@ -25,14 +25,14 @@ object FrameworkEnv {
       case e: Exception => println(e.getStackTraceString); exit(1)
     }
     
-    val output = try {
-      Class.forName(appConfig.outputClass).newInstance().asInstanceOf[AbstractEventOutput]
+    val outputClass = try {
+      Class.forName(appConfig.outputClass)
     } catch {
-      case _ => new StdEventOutput
+      case _ => Class.forName("stream.framework.output.TachyonEventOutput")
     }
     
     val operators = appConfig.properties.map(p => {
-      p match {
+      val op = p match {
         case s: CountProperty => 
           new CountOperator(s.key, s.hierarchy, s.window)
         case s: AggregateProperty => 
@@ -41,35 +41,50 @@ object FrameworkEnv {
           new DistinctAggregateCountOperator(s.key, s.value, s.hierarchy, s.window)
         case _ => new NoneOperator
       }
+      
+      val output = try {
+        Class.forName(p.outputClass).newInstance().asInstanceOf[AbstractEventOutput]
+      } catch {
+        case _ => throw new Exception("class " + p.outputClass + " new instance failed")
+      }
+      output.setOutputName(p.name)
+      (op, output)
     })
     
     def process(stream: DStream[String]) {
       val eventStream = stream.map(s => parser.parseEvent(s, appConfig.schemas))
       operators.foreach(p => {
-        val resultStream = p.process(eventStream)
-        output.output(resultStream)
+        val resultStream = p._1.process(eventStream)
+        p._2.output(resultStream)
         })
     }
   }
   
   def main(args: Array[String]) {
-    if (args.length < 6) {
-      println("FrameworkEnv master SPARK_HOME jar zkQuorum group conf/properties.xml")
+    if (args.length < 1) {
+      println("FrameworkEnv conf/properties.xml")
       exit(1)
     }
     
+    System.setProperty("spark.cleaner.ttl", "3600")
+    
     //parse the conf file
-    Configuration.parseConfig(args(5))
+    Configuration.parseConfig(args(0))
 
     //for each app, create its app env
     val appEnvs = Configuration.appConfMap.map(e => (e._1, new AppEnv(e._2)))
     
-    //create kafka input stream
-    val Array(master, sparkHome, jar, zkQuorum, group, _) = args
+    //create kafka input stream    
+    val master = System.getenv("SPARK_MASTER_URL")
+    val sparkHome = System.getenv("SPARK_HOME")
+    val jar = System.getenv("STREAM_JAR_PATH")
+    
     val sc = new SparkContext(master, "kafkaStream", sparkHome, Seq(jar))
     val ssc =  new StreamingContext(sc, Seconds(5))
     ssc.checkpoint("checkpoint")
     
+    val zkQuorum = System.getenv("ZK_QUORUM")
+    val group = System.getenv("KAFKA_GROUP")
     /****************TODO. this should be modified later*******************/
     //cause all the topics are in one DStream, first we should filter out
     // what topics to what application
