@@ -22,7 +22,6 @@ Users want to use this framework should configure the XML file `conf/properties.
         <application>
             <category>clickstream</category>
             <parser>example.clickstream.ClickEventParser</parser>
-            <output>example.clickstream.ClickEventOutput</output>
             <items>
                 <item>source_ip</item>
                 <item>dest_url</item>
@@ -37,23 +36,26 @@ Users want to use this framework should configure the XML file `conf/properties.
             <properties>
                 <property window="30" slide="10" hierarchy="/" type="count">
                     <key>dest_url</key>
+                    <output>stream.framework.output.TachyonStrToLongOutput</output>
                 </property>
                 <property window="30" slide="10" hierarchy="/" type="aggregate">
                     <key>dest_url</key>
                     <value>source_ip</value>
+                    <output>stream.framework.output.TachyonStrToStrOutput</output>
                 </property>
                 <property window="30" slide="10" hierarchy="/" type="distinct_aggregate_count">
                     <key>dest_url</key>
                     <value>source_ip</value>
+                    <output>stream.framework.output.TachyonStrToLongOutput</output>
                 </property>
             </properties>
         </application>
     </applications>
 
-Here several `application` can exists in one `applications`, user can configure `application` specific parameter like above:
+Here several `application` can co-exists in one `applications`, user can configure `application` specific parameter like above:
 
 1. `category` is the category of Kafka messge, also use this as the topic.
-2. `parser` and `output` is the user defined parser class and output class, user should extends `AbstractParser` and `AbstractOutput` to self-defined ones.
+2. `parser` is the user defined parser class class, user should extends `AbstractParser` to self-defined ones.
 3. `items` is the schema of input message, in case input message has several items, this is the name of each item.
 4. `properties` is the one you want to operate, you could specify several kinds of operators with some properties
 
@@ -66,10 +68,8 @@ Currently framework supports 3 operators for user:
 
             http://xyz.com/aaa/bbb/ccc => xyz.com/aaa/bbb/ccc xyz.com/aaa/bbb xyz.com/aaa xyz.com
     * `type`: specify the operator you choose.
+    * `output`: specify the output class you implemented to store the output data in this kind of data. `output` should extend `AbstractEventOutput`.
 * `AggregateOperator`: `AggregateOperator` will aggregate the `value` by `key` which you specified, and the parameters of this operator is the same as `CountOperator`.
-* `DistinctAggregateOperator`: `DistinctAggregateOperator` will count the distinct `value` with specified `key`, also parameters is the same as above.
+* `DistinctAggregateCountOperator`: `DistinctAggregateCountOperator` will count the distinct `value` with specified `key`, also parameters is the same as above.
 * besides, user can create their own `Operator` by extends `AbstractOperator`, which is easy and obvious.
-
-Please enjoy it.
-
 
