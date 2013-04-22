@@ -4,7 +4,6 @@
     <application>
         <category>clickstream</category>
         <parser>example.clickstream.ClickEventParser</parser>
-        <output>example.clickstream.ClickEventOutput</output>
         <items>
             <item>source_ip</item>
             <item>dest_url</item>
