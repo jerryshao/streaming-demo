@@ -25,12 +25,6 @@ object FrameworkEnv {
       case e: Exception => println(e.getStackTraceString); exit(1)
     }
     
-    val outputClass = try {
-      Class.forName(appConfig.outputClass)
-    } catch {
-      case _ => Class.forName("stream.framework.output.TachyonEventOutput")
-    }
-    
     val operators = appConfig.properties.map(p => {
       val op = p match {
         case s: CountProperty => 
@@ -77,9 +71,9 @@ object FrameworkEnv {
     //create kafka input stream    
     val master = System.getenv("SPARK_MASTER_URL")
     val sparkHome = System.getenv("SPARK_HOME")
-    val jar = System.getenv("STREAM_JAR_PATH")
+    val jars = System.getenv("STREAM_JAR_PATH").split(":")
     
-    val sc = new SparkContext(master, "kafkaStream", sparkHome, Seq(jar))
+    val sc = new SparkContext(master, "kafkaStream", sparkHome, jars.toSeq)
     val ssc =  new StreamingContext(sc, Seconds(5))
     ssc.checkpoint("checkpoint")
     

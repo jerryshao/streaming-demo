@@ -35,10 +35,11 @@ abstract class AbstractTachyonEventOutput extends AbstractEventOutput {
     val tablePath = warehousePath + "/" + getOutputName + "_tachyon"
     val table = {
       if (tachyonClient.exist(tablePath)) {
-        tachyonClient.delete(tablePath)
-      } 
-      val tableId = tachyonClient.createRawTable(tablePath, colNum)
-      tachyonClient.getRawTable(tableId)
+        tachyonClient.getRawTable(tablePath)
+      } else {
+        val tableId = tachyonClient.createRawTable(tablePath, colNum)
+        tachyonClient.getRawTable(tableId)
+      }
     }
     table
   }

@@ -17,9 +17,6 @@
 
 package stream.framework.output.column
 
-import shark.memstore2.buffer.ByteBufferReader
-
-
 /**
  * Iterator interface for a column. The iterator should be initialized by a byte
  * buffer, and next can be invoked to get the value for each cell.
